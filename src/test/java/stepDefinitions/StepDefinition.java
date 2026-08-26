@@ -42,7 +42,6 @@ public class StepDefinition {
 
         reqspec = given().spec(req).body(logInBody);
 
-
     }
 
     @When("User calls {string} with {string} http request")
@@ -90,7 +89,6 @@ public class StepDefinition {
                 formParam("productDescription", "Addias Originals").
                 formParam("productFor", "men").
                 multiPart("productImage", new File("C:/Users/91620/Downloads/awayKit.jpg"));
-
 
     }
 
