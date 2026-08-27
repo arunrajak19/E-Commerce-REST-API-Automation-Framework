@@ -6,21 +6,33 @@ import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 public class Utils {
 
-    public RequestSpecification loginRequestSpecification() {
-        RequestSpecification req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").setContentType(ContentType.JSON).build();
+    public static String getGlobalBaseURI(String key) throws IOException {
+
+        Properties properties = new Properties();
+        FileInputStream fileInputStream = new FileInputStream("C:\\E-Commerce REST API End-to-End Automation Framework\\E-Commerce-REST-API-Automation-Framework\\src\\test\\java\\resources\\global.properties");
+        properties.load(fileInputStream);
+        return properties.getProperty(key);
+    }
+
+    public RequestSpecification loginRequestSpecification() throws IOException {
+        RequestSpecification req = new RequestSpecBuilder().setBaseUri(getGlobalBaseURI("baseURI")).setContentType(ContentType.JSON).build();
         return req;
     }
 
-    public RequestSpecification requestSpecification(String token) {
-        RequestSpecification req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
+    public RequestSpecification requestSpecification(String token) throws IOException {
+        RequestSpecification req = new RequestSpecBuilder().setBaseUri(getGlobalBaseURI("baseURI")).
                 addHeader("Authorization", token).build();
         return req;
     }
 
-    public RequestSpecification requestSpecificationWithContentType(String token) {
-        RequestSpecification req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
+    public RequestSpecification requestSpecificationWithContentType(String token) throws IOException {
+        RequestSpecification req = new RequestSpecBuilder().setBaseUri(getGlobalBaseURI("baseURI")).
                 addHeader("Authorization", token).setContentType(ContentType.JSON).build();
         return req;
     }

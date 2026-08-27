@@ -12,6 +12,7 @@ import resources.TestData;
 import resources.Utils;
 
 import java.io.File;
+import java.io.IOException;
 
 import static io.restassured.RestAssured.given;
 
@@ -27,7 +28,7 @@ public class StepDefinition extends Utils {
     Response response;
 
     @Given("User is on login page")
-    public void user_is_on_login_page() {
+    public void user_is_on_login_page() throws IOException {
         reqspec = given().spec(loginRequestSpecification()).body(TestData.loginData());
     }
 
@@ -71,7 +72,7 @@ public class StepDefinition extends Utils {
     }
 
     @Given("User is adding product")
-    public void user_is_adding_product() {
+    public void user_is_adding_product() throws IOException {
 
         reqspec = given().spec(requestSpecification(token)).formParam("productName", "Football").
                 formParam("productAddedBy", userId).
@@ -90,7 +91,7 @@ public class StepDefinition extends Utils {
     }
 
     @Given("User is on home page")
-    public void user_is_on_home_page() {
+    public void user_is_on_home_page() throws IOException {
         reqspec = given().spec(requestSpecificationWithContentType(token)).body(TestData.ordersData(productId));
     }
 
@@ -101,7 +102,7 @@ public class StepDefinition extends Utils {
     }
 
     @Given("User is on orders page")
-    public void user_is_on_orders_page() {
+    public void user_is_on_orders_page() throws IOException {
         reqspec = given().spec(requestSpecification(token)).queryParam("id", orderId);
     }
 
@@ -113,7 +114,7 @@ public class StepDefinition extends Utils {
     }
 
     @Given("User want to delete the added product")
-    public void user_want_to_delete_the_added_product() {
+    public void user_want_to_delete_the_added_product() throws IOException {
         reqspec = given().spec(requestSpecificationWithContentType(token)).pathParams("productId", productId);
     }
 }
