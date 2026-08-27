@@ -8,12 +8,14 @@ import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import jdk.jshell.execution.Util;
 import org.testng.Assert;
 import pojo.LogInBody;
 import pojo.LogInResponse;
 import pojo.OrderDetails;
 import pojo.Orders;
 import resources.APIResources;
+import resources.Utils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +23,7 @@ import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
-public class StepDefinition {
+public class StepDefinition extends Utils {
 
     static String token;
     static String productId;
@@ -35,13 +37,11 @@ public class StepDefinition {
     @Given("User is on login page")
     public void user_is_on_login_page() {
 
-        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").setContentType(ContentType.JSON).build();
-
         LogInBody logInBody = new LogInBody();
         logInBody.setUserEmail("lionel@gmail.com");
         logInBody.setUserPassword("Messi@10");
 
-        reqspec = given().spec(req).body(logInBody);
+        reqspec = given().spec(loginRequestSpecification()).body(logInBody);
 
     }
 
@@ -89,10 +89,8 @@ public class StepDefinition {
 
     @Given("User is adding product")
     public void user_is_adding_product() {
-        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
-                addHeader("Authorization", token).build();    // here our content type is not json
 
-        reqspec = given().spec(req).formParam("productName", "Football").
+        reqspec = given().spec(requestSpecification(token)).formParam("productName", "Football").
                 formParam("productAddedBy", userId).
                 formParam("productCategory", "fashion").
                 formParam("productSubCategory", "shirts").
@@ -116,13 +114,14 @@ public class StepDefinition {
 
     @Given("User is on home page")
     public void user_is_on_home_page() {
-        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
-                addHeader("Authorization", token).setContentType(ContentType.JSON).build();
+//        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
+//                addHeader("Authorization", token).setContentType(ContentType.JSON).build();
 
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setCountry("India");
         orderDetails.setProductOrderedId(productId);
         System.out.println(productId);
+
 
         List<OrderDetails> orderDetailsList = new ArrayList<>();
         orderDetailsList.add(orderDetails);
@@ -130,7 +129,7 @@ public class StepDefinition {
         Orders orders = new Orders();
         orders.setOrders(orderDetailsList);
 
-        reqspec = given().spec(req).body(orders);
+        reqspec = given().spec(requestSpecificationWithContentType(token)).body(orders);
 
 
     }
@@ -148,10 +147,8 @@ public class StepDefinition {
 
     @Given("User is on orders page")
     public void user_is_on_orders_page() {
-        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
-                addHeader("Authorization", token).build();
 
-        reqspec = given().spec(req).queryParam("id", orderId);
+        reqspec = given().spec(requestSpecification(token)).queryParam("id", orderId);
     }
 
     @Then("OrderID, userId and productOrderId is generated")
@@ -165,8 +162,6 @@ public class StepDefinition {
 
     @Given("User want to delete the added product")
     public void user_want_to_delete_the_added_product() {
-        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
-                addHeader("Authorization", token).build();
-        reqspec = given().spec(req).pathParams("productId", productId);
+        reqspec = given().spec(requestSpecificationWithContentType(token)).pathParams("productId", productId);
     }
 }
