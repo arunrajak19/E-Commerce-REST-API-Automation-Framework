@@ -25,6 +25,7 @@ public class StepDefinition {
 
     static String token;
     static String productId;
+    static String orderId;
     RequestSpecification req;
     RequestSpecification reqspec;
     LogInResponse logInResponse;
@@ -48,8 +49,13 @@ public class StepDefinition {
     public void user_calls_with_http_request(String resource, String httpMethod) {
 
         APIResources apiResources = APIResources.valueOf(resource);
-        response = reqspec.when().post(apiResources.getResources()).
-                then().extract().response();
+        if (httpMethod.equalsIgnoreCase("POST")) {
+            response = reqspec.when().post(apiResources.getResources()).
+                    then().extract().response();
+        } else if (httpMethod.equalsIgnoreCase("GET")) {
+            response = reqspec.when().get(apiResources.getResources()).
+                    then().extract().response();
+        }
     }
 
     @Then("API call got success with status code {int}")
@@ -129,9 +135,27 @@ public class StepDefinition {
         String createProductResponse = response.asString();
         JsonPath jp = new JsonPath(createProductResponse);
 
-        String orderId = jp.getString("orders[0]");
+        orderId = jp.getString("orders[0]");
         System.out.println(orderId);
         String orderedMesssage = jp.getString("message");
         System.out.println(orderedMesssage);
+    }
+
+    @Given("User is on orders page")
+    public void user_is_on_orders_page() {
+        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
+                addHeader("Authorization", token).build();
+
+        System.out.println("OrderId is: " + orderId);
+        reqspec = given().spec(req).queryParam("id", orderId);
+    }
+
+    @Then("OrderID, userId and productOrderId is generated")
+    public void order_id_user_id_and_product_order_id_is_generated() {
+        String getResponse = response.asString();
+        JsonPath jp = new JsonPath(getResponse);
+
+        System.out.println(getResponse);
+//        String id = jp.getString("_id");
     }
 }

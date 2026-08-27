@@ -20,3 +20,10 @@ Feature: Validating ECommerce API
     Then API call got success with status code 201
     And OrderID is generated
     And We get a success message "Order Placed Successfully"
+
+  Scenario: Get Oder Details
+    Given User is on orders page
+    When User calls "getOrderAPI" with "GET" http request
+    Then API call got success with status code 200
+    And OrderID, userId and productOrderId is generated
+    And We get a success message "Orders fetched for customer Successfully"
