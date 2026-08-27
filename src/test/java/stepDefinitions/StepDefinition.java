@@ -3,23 +3,15 @@ package stepDefinitions;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import io.restassured.builder.RequestSpecBuilder;
-import io.restassured.http.ContentType;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import jdk.jshell.execution.Util;
 import org.testng.Assert;
-import pojo.LogInBody;
 import pojo.LogInResponse;
-import pojo.OrderDetails;
-import pojo.Orders;
 import resources.APIResources;
+import resources.TestData;
 import resources.Utils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -28,21 +20,15 @@ public class StepDefinition extends Utils {
     static String token;
     static String productId;
     static String orderId;
+    static String userId;
     RequestSpecification req;
     RequestSpecification reqspec;
     LogInResponse logInResponse;
     Response response;
-    String userId;
 
     @Given("User is on login page")
     public void user_is_on_login_page() {
-
-        LogInBody logInBody = new LogInBody();
-        logInBody.setUserEmail("lionel@gmail.com");
-        logInBody.setUserPassword("Messi@10");
-
-        reqspec = given().spec(loginRequestSpecification()).body(logInBody);
-
+        reqspec = given().spec(loginRequestSpecification()).body(TestData.loginData());
     }
 
     @When("User calls {string} with {string} http request")
@@ -81,10 +67,7 @@ public class StepDefinition extends Utils {
 
     @Then("We get a success message {string}")
     public void we_get_a_success_message(String message) {
-        String responseBody = response.asString();
-        JsonPath jp = new JsonPath(responseBody);
-        Assert.assertEquals(jp.getString("message"), message);
-        System.out.println("Message is: " + jp.getString("message"));
+        Assert.assertEquals(getJsonValue(response, "message"), message);
     }
 
     @Given("User is adding product")
@@ -98,66 +81,35 @@ public class StepDefinition extends Utils {
                 formParam("productDescription", "Addias Originals").
                 formParam("productFor", "men").
                 multiPart("productImage", new File("C:/Users/91620/Downloads/awayKit.jpg"));
-
     }
 
     @Then("Product Id is generated")
     public void product_id_is_generated() {
-
-        String addProductResponse = response.asString();
-        JsonPath jp = new JsonPath(addProductResponse);
-        productId = jp.getString("productId");
-
+        productId = getJsonValue(response, "productId");
         System.out.println("ProductId is: " + productId);
-
     }
 
     @Given("User is on home page")
     public void user_is_on_home_page() {
-//        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
-//                addHeader("Authorization", token).setContentType(ContentType.JSON).build();
-
-        OrderDetails orderDetails = new OrderDetails();
-        orderDetails.setCountry("India");
-        orderDetails.setProductOrderedId(productId);
-        System.out.println(productId);
-
-
-        List<OrderDetails> orderDetailsList = new ArrayList<>();
-        orderDetailsList.add(orderDetails);
-
-        Orders orders = new Orders();
-        orders.setOrders(orderDetailsList);
-
-        reqspec = given().spec(requestSpecificationWithContentType(token)).body(orders);
-
-
+        reqspec = given().spec(requestSpecificationWithContentType(token)).body(TestData.ordersData(productId));
     }
 
     @Then("OrderID is generated")
     public void order_id_is_generated() {
-        String createProductResponse = response.asString();
-        JsonPath jp = new JsonPath(createProductResponse);
-
-        orderId = jp.getString("orders[0]");
+        orderId = getJsonValue(response, "orders[0]");
         System.out.println(orderId);
-        String orderedMesssage = jp.getString("message");
-        System.out.println(orderedMesssage);
     }
 
     @Given("User is on orders page")
     public void user_is_on_orders_page() {
-
         reqspec = given().spec(requestSpecification(token)).queryParam("id", orderId);
     }
 
     @Then("OrderID, userId and productOrderId is generated")
     public void order_id_user_id_and_product_order_id_is_generated() {
-        String getResponse = response.asString();
-        JsonPath jp = new JsonPath(getResponse);
-
-        System.out.println(getResponse);
-//        String id = jp.getString("_id");
+        Assert.assertEquals(getJsonValue(response, "data._id"), orderId);
+        Assert.assertEquals(getJsonValue(response, "data.orderById"), userId);
+        Assert.assertEquals(getJsonValue(response, "data.productOrderedId"), productId);
     }
 
     @Given("User want to delete the added product")
