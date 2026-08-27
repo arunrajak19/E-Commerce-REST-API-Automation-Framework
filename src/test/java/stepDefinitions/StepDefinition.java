@@ -55,13 +55,18 @@ public class StepDefinition {
         } else if (httpMethod.equalsIgnoreCase("GET")) {
             response = reqspec.when().get(apiResources.getResources()).
                     then().extract().response();
+        } else if (httpMethod.equalsIgnoreCase("DELETE")) {
+            response = reqspec.when().delete(apiResources.getResources()).
+                    then().extract().response();
         }
     }
 
     @Then("API call got success with status code {int}")
     public void api_call_got_success_with_status_code(int statusCode) {
 
+        String responseBody = response.asString();
         System.out.println(response.statusCode());
+        System.out.println(responseBody);
         Assert.assertEquals(response.statusCode(), statusCode);
 
     }
@@ -146,7 +151,6 @@ public class StepDefinition {
         req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
                 addHeader("Authorization", token).build();
 
-        System.out.println("OrderId is: " + orderId);
         reqspec = given().spec(req).queryParam("id", orderId);
     }
 
@@ -157,5 +161,12 @@ public class StepDefinition {
 
         System.out.println(getResponse);
 //        String id = jp.getString("_id");
+    }
+
+    @Given("User want to delete the added product")
+    public void user_want_to_delete_the_added_product() {
+        req = new RequestSpecBuilder().setBaseUri("https://rahulshettyacademy.com").
+                addHeader("Authorization", token).build();
+        reqspec = given().spec(req).pathParams("productId", productId);
     }
 }

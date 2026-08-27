@@ -27,3 +27,9 @@ Feature: Validating ECommerce API
     Then API call got success with status code 200
     And OrderID, userId and productOrderId is generated
     And We get a success message "Orders fetched for customer Successfully"
+
+  Scenario: Delete the product
+    Given User want to delete the added product
+    When User calls "deleteProductAPI" with "DELETE" http request
+    Then API call got success with status code 200
+    And We get a success message "Product Deleted Successfully"

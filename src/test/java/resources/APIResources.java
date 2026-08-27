@@ -5,7 +5,7 @@ public enum APIResources {
     addProductAPI("/api/ecom/product/add-product"),
     createOrderAPI("/api/ecom/order/create-order"),
     getOrderAPI("/api/ecom/order/get-orders-details"),
-    deletePlaceAPI("/api/ecom/product/delete-product");
+    deleteProductAPI("/api/ecom/product/delete-product/{productId}");
 
     private String resources;
 
