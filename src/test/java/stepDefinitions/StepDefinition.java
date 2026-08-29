@@ -61,7 +61,6 @@ public class StepDefinition extends Utils {
     @Then("Token and userId is generated")
     public void token_and_userId_is_generated() {
         logInResponse = response.as(LogInResponse.class);
-
         token = logInResponse.getToken();
         userId = logInResponse.getUserId();
     }
@@ -87,7 +86,6 @@ public class StepDefinition extends Utils {
     @Then("Product Id is generated")
     public void product_id_is_generated() {
         productId = getJsonValue(response, "productId");
-        System.out.println("ProductId is: " + productId);
     }
 
     @Given("User is on home page")
