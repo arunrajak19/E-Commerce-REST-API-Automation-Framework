@@ -20,7 +20,6 @@ public class TestData {
         OrderDetails orderDetails = new OrderDetails();
         orderDetails.setCountry("India");
         orderDetails.setProductOrderedId(productId);
-        System.out.println(productId);
 
         List<OrderDetails> orderDetailsList = new ArrayList<>();
         orderDetailsList.add(orderDetails);
