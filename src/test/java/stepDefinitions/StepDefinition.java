@@ -65,8 +65,8 @@ public class StepDefinition extends Utils {
         userId = logInResponse.getUserId();
     }
 
-    @Then("We get a success message {string}")
-    public void we_get_a_success_message(String message) {
+    @Then("We get a message {string}")
+    public void we_get_a_message(String message) {
         Assert.assertEquals(getJsonValue(response, "message"), message);
     }
 
@@ -113,6 +113,11 @@ public class StepDefinition extends Utils {
 
     @Given("User want to delete the added product")
     public void user_want_to_delete_the_added_product() throws IOException {
-        reqspec = given().spec(requestSpecificationWithContentType(token)).pathParams("productId", productId);
+        reqspec = given().spec(requestSpecification(token)).pathParams("productId", productId);
+    }
+
+    @Given("User want to delete the order")
+    public void user_want_to_delete_the_order() throws IOException {
+        reqspec = given().spec(requestSpecification(token)).pathParams("orderId", orderId);
     }
 }
